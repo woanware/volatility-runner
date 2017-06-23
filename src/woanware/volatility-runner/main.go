@@ -10,6 +10,8 @@ import (
 	"os/exec"
 )
 
+// ##### Structures ####################################################################################################
+
 type Config struct {
 	VolatilityPath string   `yaml:"volatility_path"`
 	OutputPath     string   `yaml:"output_path"`
@@ -22,8 +24,18 @@ type Data struct {
 	Profile string `yaml:"profile"`
 }
 
+// ##### Constants #####################################################################################################
+
+// App Constants
+const APP_NAME string = "volatility-runner (vr)"
+const APP_VERSION string = "0.0.1"
+
+// ##### Methods #######################################################################################################
+
 //
 func main() {
+
+	fmt.Println(fmt.Sprintf("\n%s v%s - woanware\n", APP_NAME, APP_VERSION))
 
 	c, err := loadConfig()
 	if err != nil {
@@ -42,23 +54,12 @@ func main() {
 	}
 }
 
+//
 func runCommand(c *Config, data Data, plugin string) {
 
 	fileName := filepath.Base(data.RamPath)
 	fmt.Println("Running plugin '" + plugin + "' against RAM dump '" + fileName + "' @ " +  time.Now().Format(time.RFC3339))
 	cmd := exec.Command(c.VolatilityPath, "-f", data.RamPath, "--profile", data.Profile, "--output-file", filepath.Join(c.OutputPath, fileName + "." + plugin + ".txt"), plugin)
-
-	
-
-	
-
-    //outfile, err := os.Create(filepath.Join(c.OutputPath, fileName + "." + plugin + ".txt"))
-   // if err != nil {
-    //    fmt.Printf("Error running command: %v", err)
-   // }
-   // defer outfile.Close()
-
-   // cmd.Stdout = outfile
 
     err := cmd.Start()
     if err != nil {
@@ -67,6 +68,7 @@ func runCommand(c *Config, data Data, plugin string) {
     cmd.Wait()
 }
 
+//
 func loadConfig() (*Config, error) {
 
 	input, err := os.Open("volatility-runner.config")
@@ -89,6 +91,7 @@ func loadConfig() (*Config, error) {
 	return c, nil
 }
 
+// 
 func validateConfig(c *Config) bool {
 
 	ret := true
