@@ -7,24 +7,39 @@ The purpose of the application is to provide the plugins that are required to be
 The application is controlled by yaml config file; an example of which is shown below:
 
 ```
-volatility_path: "C:\\tools\\volatility_2.6_win64_standalone\\volatility_2.6_win64_standalone.exe"
-output_path: "C:\\output"
+volatility_path: "/opt/volatility/vol.py"
+output_path: "/home/woany/mem/output"
+use_summary_dir: true
+
 plugins:
-    - pslist
-    - netscan
-    - svcscan
+    - name: pslist
+      summarise: true
+    - name: shimcachemem
+      summarise: true
+    - name:  pstree
+      summarise: true
+    - name: psxview
+      summarise: true
+    - name:  cmdline
+
 data:
     - ram_path: "C:\\dumps\\one.dmp"
       profile: Win7SP1x64_23418
     - ram_path: "C:\\dumps\\two.dmp"
       profile: Win7SP1x64_23418
     - ram_path: "C:\\dumps\\three.dmp"
-      profile: Win10x64_10586  
+      profile: Win10x64_10586
 ```
+
+The **use_summary_dir** value creates a sub-directory to the location where the memory dump is located. The sub-directory is used to create the summary.md file
+
+Each of the plugin values has a **summarise** value, which controls whether the data from the plugin is included in the summary. For example **filehandles** might create too much noise and so would have a **false** value set.
+
+The config file supplied with the binary contains the core plugins set, with appropriate summarise (IMHO) values.
 
 **It is important to know that backslashes must be escaped e.g. double slash else you will get an error such as:**
 
->Error loading config: Error unmarshalling the hunt file: yaml: line 7: found unknown escape character
+> Error loading config: Error unmarshalling the hunt file: yaml: line 7: found unknown escape character
 
 When running **vr** will keep the user informed as to what is running like so:
 
